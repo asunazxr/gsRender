@@ -20,7 +20,8 @@ struct splatPoint{
 enum renderModths{
     POINT_SPIRIT,
     POINT_SPIRIT_INSTANCED,
-    INSTANCED_QUAD
+    INSTANCED_QUAD,
+    SIMPLE_INSTANCED_QUAD
 };
 
 class gs
@@ -40,7 +41,7 @@ private:;
     };
     float pointVerts[3]={0.0f,0.0f,0.0f};
     const float SH_C0 = 0.28209479177387814;
-    renderModths defaultModth;
+    
     int num;
     std::string Path;
     GLuint vao, vbo, instVbo;           // OpenGL缓冲区对象
@@ -51,4 +52,5 @@ public:
     bool load();
     void Draw(Shader* shader);
     std::vector<splatPoint> gaussian;
+    renderModths defaultModth;
 };

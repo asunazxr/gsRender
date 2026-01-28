@@ -23,10 +23,10 @@ void main() {
     vec4 pos2d = projection * cam;
     pos2d.xyz = pos2d.xyz / pos2d.w;
     //视锥剔除
-    // if(any(greaterThan(abs(pos2d.xyz),vec3(1.3)))){
-    //     gl_Position = vec4(-100,-100,-100,-1);
-    //     return;
-    // }
+    if(any(greaterThan(abs(pos2d.xyz),vec3(1.3)))){
+        gl_Position = vec4(-100,-100,-100,-1);
+        return;
+    }
     //获取三维协方差
     mat3 cov3d = mat3(
         cov3d_upper.x, cov3d_upper.y, cov3d_upper.z,
@@ -64,5 +64,5 @@ void main() {
     gl_Position = vec4((vertexPos / viewportSize) * 2.0 - 1.0, pos2d.z, 1.0);
 
     vColor = aInstanceColor;
-    vPosition = aQuadPos * qualSize;
+    vPosition = aQuadPos  ;
 }

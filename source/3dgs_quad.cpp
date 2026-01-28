@@ -7,7 +7,6 @@ gs::gs( std::string Path){
 }
 
 
-
 bool gs::load() {
     try {
         if (Path.empty()) {
@@ -68,7 +67,13 @@ bool gs::load() {
             dc = dc * SH_C0 + glm::vec3(0.5f);
             point.color= glm::vec4(dc.r,dc.g,dc.b,opacity);
             //cov3d
-            computecov3d(point.scale, point.rot, point.cov3d_upper, point.cov3d_lower);
+            if(this->defaultModth == SIMPLE_INSTANCED_QUAD){
+                point.cov3d_lower = glm::vec3(0.0f);
+                point.cov3d_upper = glm::vec3(0.0f);
+            }else{
+                computecov3d(point.scale, point.rot, point.cov3d_upper, point.cov3d_lower);
+            }
+            
             gaussian.push_back(point);
         }
         if (!gaussian.empty()) {
@@ -131,7 +136,7 @@ void gs::init(){
         glEnableVertexAttribArray(4);
         glVertexAttribPointer(4,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,cov3d_lower));
         glVertexAttribDivisor(4,1);
-    }else{
+    }else if(this->defaultModth == INSTANCED_QUAD){
         glGenVertexArrays(1,&vao);
         glBindVertexArray(vao);
         glGenBuffers(1,&vbo);
@@ -158,6 +163,31 @@ void gs::init(){
         glVertexAttribPointer(4,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,cov3d_lower));
         glVertexAttribDivisor(4,1);
 
+    }else if(this->defaultModth == SIMPLE_INSTANCED_QUAD){
+        glGenVertexArrays(1,&vao);
+        glBindVertexArray(vao);
+        glGenBuffers(1,&vbo);
+        glBindBuffer(GL_ARRAY_BUFFER,vbo);
+        glBufferData(GL_ARRAY_BUFFER,sizeof(quadVerts),&quadVerts[0],GL_STREAM_DRAW);
+    
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,2*sizeof(float),(void*)0);
+
+        glGenBuffers(1,&instVbo);
+        glBindBuffer(GL_ARRAY_BUFFER,instVbo);
+        glBufferData(GL_ARRAY_BUFFER,gaussian.size()*sizeof(splatPoint),&gaussian[0],GL_DYNAMIC_DRAW);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)0);
+        glVertexAttribDivisor(1,1);
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,scale));
+        glVertexAttribDivisor(2,1);
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3,4,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,rot));
+        glVertexAttribDivisor(3,1);
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4,4,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,color));
+        glVertexAttribDivisor(4,1);
     }
     
 }
@@ -180,7 +210,10 @@ void gs::Draw(Shader* shader){
         glBindVertexArray(vao);
         glDrawArraysInstanced(GL_POINTS,0,1,gaussian.size());
     }
-    else{
+    else if(this->defaultModth == INSTANCED_QUAD){
+        glBindVertexArray(vao);
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP,0,4,(GLsizei)gaussian.size());
+    }else if(this->defaultModth == SIMPLE_INSTANCED_QUAD){
         glBindVertexArray(vao);
         glDrawArraysInstanced(GL_TRIANGLE_STRIP,0,4,(GLsizei)gaussian.size());
     }
