@@ -6,10 +6,13 @@ in mat2 conic;
 out vec4 fragColor;
 
 void main () {
-    float power = -0.5 * dot(vPosition,conic * vPosition);
-    if(power > 0.0) discard;
+    float c = dot(vPosition,conic * vPosition);
+    if(c > 1) discard;
+    float power = -0.5 * c;
+    // float power = -0.5 * dot(vPosition,conic * vPosition);
+    // if(power > 0.0) discard;
+    
     float a = vColor.a * exp(power);
     if(a < 0.004) discard;
-    fragColor = vec4(vColor.rgb * a, a);
-    //fragColor = vec4(1.0,0.0,0.0,1.0);
+    fragColor = vec4(vColor.rgb , a);
 }
