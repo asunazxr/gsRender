@@ -11,7 +11,6 @@ uniform vec2 viewportSize;
 
 out vec4 vColor;
 out vec2 vScreenPos;
-out float vPointSize;
 out mat2 conic;
 
 void main() {
@@ -43,5 +42,4 @@ void main() {
     vec2 pointSize = 3.0 * vec2(sqrt(cov2d_3[0][0]), sqrt(cov2d_3[1][1]));
 
     gl_PointSize = max(pointSize.x,pointSize.y);
-    vPointSize = gl_PointSize;
 }
