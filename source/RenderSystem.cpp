@@ -6,14 +6,14 @@
 
 
 RenderSystem::RenderSystem(){
-    // std::string vertexPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\vertex_instanced_quad.shader";
-    // std::string fregmentPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\fragment_instanced_quad.shader";
+    std::string vertexPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\vertex_instanced_quad.shader";
+    std::string fragmentPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\fragment_instanced_quad.shader";
     // std::string vertexPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\1.shader";
     // std::string fregmentPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\2.shader";
     // std::string vertexPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\point\\pointSpirit.vs";
     // std::string fragmentPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\point\\pointSpirit.fs";
-    std::string vertexPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\point\\pointSpiritInstanced.vs";
-    std::string fragmentPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\point\\pointSpiritInstanced.fs";
+    // std::string vertexPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\point\\pointSpiritInstanced.vs";
+    // std::string fragmentPath = "C:\\Users\\ASUS\\Desktop\\proj\\minRender\\shader\\point\\pointSpiritInstanced.fs";
     this->shader = new Shader(vertexPath.c_str(),fragmentPath.c_str());
     glEnable(GL_DEPTH_TEST);
     //glDepthMask(GL_FALSE);

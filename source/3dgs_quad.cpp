@@ -2,7 +2,7 @@
 #include<algorithm>
 gs::gs( std::string Path){
     this->Path = Path;
-    this->defaultModth = POINT_SPIRIT_INSTANCED;
+    this->defaultModth = INSTANCED_QUAD;
     //shader
 }
 
@@ -144,27 +144,19 @@ void gs::init(){
         glGenBuffers(1,&instVbo);
         glBindBuffer(GL_ARRAY_BUFFER,instVbo);
         glBufferData(GL_ARRAY_BUFFER,gaussian.size()*sizeof(splatPoint),&gaussian[0],GL_DYNAMIC_DRAW);
-        // debug: print instance count
-        std::cout << "gs::init - instance count: " << gaussian.size() << std::endl;
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)0);
         glVertexAttribDivisor(1,1);
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,scale));
+        glVertexAttribPointer(2,4,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,color));
         glVertexAttribDivisor(2,1);
+        // 使用两个 vec3 存储协方差矩阵的上三角部分
         glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3,4,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,rot));
+        glVertexAttribPointer(3,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,cov3d_upper));
         glVertexAttribDivisor(3,1);
         glEnableVertexAttribArray(4);
-        glVertexAttribPointer(4,4,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,color));
+        glVertexAttribPointer(4,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,cov3d_lower));
         glVertexAttribDivisor(4,1);
-        // 使用两个 vec3 存储协方差矩阵的上三角部分
-        glEnableVertexAttribArray(5);
-        glVertexAttribPointer(5,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,cov3d_upper));
-        glVertexAttribDivisor(5,1);
-        glEnableVertexAttribArray(6);
-        glVertexAttribPointer(6,3,GL_FLOAT,GL_FALSE,sizeof(splatPoint),(void*)offsetof(splatPoint,cov3d_lower));
-        glVertexAttribDivisor(6,1);
 
     }
     
@@ -191,7 +183,6 @@ void gs::Draw(Shader* shader){
     else{
         glBindVertexArray(vao);
         glDrawArraysInstanced(GL_TRIANGLE_STRIP,0,4,(GLsizei)gaussian.size());
-
     }
 
 
