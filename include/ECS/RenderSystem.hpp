@@ -1,9 +1,5 @@
 #pragma once
-#include"ECS/ECSRegistry.hpp"
-#include"shader.hpp"
-#include"camera.hpp"
-#include<vector>
-#include<map>
+#include<shader.hpp>
 #include<widget.hpp>
 class RenderSystem{
 

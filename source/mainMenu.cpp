@@ -1,6 +1,6 @@
 #include<mainMenu.hpp>
 #include<string>
-#include<ECS/CTransform.hpp>
+#include<ECS/component.hpp>
 myImGui::myImGui(GLFWwindow* window,const char* glsl_version){
     init(window,glsl_version);
 }
@@ -48,6 +48,18 @@ void myImGui::render(widget& widget){
         }
         ImGui::TreePop();
     }
+    // if(ImGui::TreeNode("camera choice")){
+    //     for(int i=0;i<w->entities.size();++i){
+    //         std::string model = "Model"+std::to_string(i);
+    //         auto& modelComp = ECSRegistry::getInstance().get<ModelComponent>(w->entities[i]);
+    //         if(ImGui::Button(model.c_str())){
+    //             w->camera = modelComp.model->getGsCamera();
+
+    //         }
+            
+    //     }
+    //     ImGui::TreePop();
+    // }
     if(ImGui::TreeNode("scene models")){
         for(int i=0;i<w->entities.size();++i){
             std::string model = "Model"+std::to_string(i);
@@ -55,9 +67,9 @@ void myImGui::render(widget& widget){
             if(ImGui::TreeNode(model.c_str())){
                 ImGui::Separator();
                 ImGui::Text("Translate:");
-                ImGui::DragFloat3("position",(float*)&translateComp.position);
-                ImGui::DragFloat3("rotation",(float*)&translateComp.rotation,1.0f,-360.0f,360.0f);
-                ImGui::DragFloat3("size",(float*)&translateComp.scale);
+                ImGui::DragFloat3("position",(float*)&translateComp.position,0.01);
+                ImGui::DragFloat3("rotation",(float*)&translateComp.rotation,0.1f,-360.0f,360.0f);
+                ImGui::DragFloat3("size",(float*)&translateComp.scale,0.1);
                 ImGui::Separator();
                 ImGui::TreePop();
             }  
@@ -65,11 +77,12 @@ void myImGui::render(widget& widget){
         ImGui::TreePop();
     }
 
+
     ImGui::End();
     if(data.showCameraSetting){
         ImGui::Begin("Camera setting");
         ImGui::Separator();
-        ImGui::DragFloat3("position",(float*)&widget.camera.Position);
+        ImGui::DragFloat3("position",(float*)&widget.camera.Position,0.01);
         ImGui::DragFloat("Zoom",(float*)&widget.camera.Zoom,1.0f,1.0f,89.0f);
         ImGui::DragFloat("MovementSpeed",(float*)&widget.camera.MovementSpeed,0.1f,0.1f,10.0f);
         ImGui::DragFloat("MouseSentitivity",(float*)&widget.camera.MouseSentitivity,0.01f,0.01f,0.2f);

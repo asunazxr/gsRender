@@ -5,9 +5,10 @@
 #include<unordered_map>
 #include<mutex>
 #include<iostream>
-#include<filesystem>
-#include"ECS/CModel.hpp"
+
+#include<ECS/component.hpp>
 #include<future>
+#include<dataset.hpp>
 
 class ModelLoader
 {
@@ -22,8 +23,8 @@ public:
     }
     
 
-    std::shared_ptr<gs> loadModel(const std::string& filePath);
-    std::future<std::shared_ptr<gs>> loadModelAsync(const std::string& filePath);
+    std::shared_ptr<Dataset::Data> loadModel(const std::string& filePath);
+    // std::future<std::shared_ptr<gs>> loadModelAsync(const std::string& filePath);
     void clearCache();
     void releaseUnusedModels();
 
@@ -32,8 +33,7 @@ private:
 
     ModelLoader(/* args */);
     ~ModelLoader()=default;
-
-    std::unordered_map<std::string,std::shared_ptr<gs>> modelCache;
+    std::unordered_map<std::string,std::shared_ptr<Dataset::Data>> modelCache;
     mutable std::mutex cacheMutex;
 };
 

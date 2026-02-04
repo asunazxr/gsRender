@@ -1,11 +1,17 @@
 #version 430 core
 layout(location=0) in vec2 aQuadPos;
-
-
-layout(location=1) in vec3 aInstancePos;
-layout(location=2) in vec4 aInstanceColor;
-layout(location=3) in vec3 cov3d_upper;  // a, b, c
-layout(location=4) in vec3 cov3d_lower;  // d, e, f
+struct splatPoint{ 
+    vec3 position; 
+    vec4 color;
+    vec3 cov3d_upper; 
+    vec3 cov3d_lower; 
+};
+layout(std430,binding=0) buffer gaussianBuffer{
+    splatPoint gaussians[];
+};
+layout(std430,binding=1) buffer indexBuffer{
+    int index[];
+};
 
 uniform mat4 model;
 uniform mat4 view;
@@ -17,9 +23,9 @@ out vec4 vColor;
 out mat2 conic;
 
 void main() {
-    //相机视角下示例中心点坐标
-    vec4 cam =  view * model * vec4(aInstancePos,1.0);
-    //裁剪空间坐标
+    // Use view-space camera similar to the referenced method
+    splatPoint point = gaussians[index[gl_InstanceID]];
+    vec4 cam = view * model * vec4(point.position, 1.0);
     vec4 pos2d = projection * cam;
     pos2d.xyz = pos2d.xyz / pos2d.w;
     //视锥剔除
@@ -27,11 +33,11 @@ void main() {
         gl_Position = vec4(-100,-100,-100,-1);
         return;
     }
-    //获取三维协方差
+
     mat3 cov3d = mat3(
-        cov3d_upper.x, cov3d_upper.y, cov3d_upper.z,
-        cov3d_upper.y, cov3d_lower.x, cov3d_lower.y,
-        cov3d_upper.z, cov3d_lower.y, cov3d_lower.z
+        point.cov3d_upper.x, point.cov3d_upper.y, point.cov3d_upper.z,
+        point.cov3d_upper.y, point.cov3d_lower.x, point.cov3d_lower.y,
+        point.cov3d_upper.z, point.cov3d_lower.y, point.cov3d_lower.z
     );
     //计算三维雅可比矩阵
     float z = cam.z;
@@ -44,8 +50,8 @@ void main() {
     );
     //计算二维协方差
     mat3 W = mat3(view);
-    mat3 T = J*W;
-    mat3 cov2d_3 = T * cov3d * transpose(T);
+    mat3 T = W*J;
+    mat3 cov2d_3 = transpose(T) * cov3d * T;
     mat2 cov2d = mat2(cov2d_3);
     
     float det = cov2d[0][0] * cov2d[1][1] - cov2d[0][1] * cov2d[1][0];
@@ -55,14 +61,14 @@ void main() {
 
     //将四边形中心移动到高斯点，此时高斯点在裁剪空间
     //根据协方差计算四边形大小
-    vec2 qualSize = 3.0 * vec2(sqrt(cov2d[0][0]),sqrt(cov2d[1][1]));
+    vec2 quadSize = 3.0 * vec2(sqrt(cov2d[0][0]),sqrt(cov2d[1][1]));
     //高斯点在屏幕坐标
     vec2 guassCenter = (vec2(pos2d) + 1.0) * 0.5 *viewportSize;
 
 
-    vec2 vertexPos = guassCenter + aQuadPos * qualSize;
+    vec2 vertexPos = guassCenter + aQuadPos * quadSize;
     gl_Position = vec4((vertexPos / viewportSize) * 2.0 - 1.0, pos2d.z, 1.0);
 
-    vColor = aInstanceColor;
+    vColor = point.color;
     vPosition = aQuadPos  ;
 }

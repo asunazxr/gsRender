@@ -31,7 +31,6 @@ private:
 
 public:
     glm::vec3 Position;
-    glm::vec2 focal = glm::vec2(1164.6601287484507,1159.5880733038064);
     glm::vec3 Front;
     glm::vec3 Up;
     glm::vec3 Right;
@@ -41,11 +40,11 @@ public:
     float MovementSpeed;
     float MouseSentitivity;
     float Zoom;
-    float near = 1.0f;
-    float far = 100.0f;
+    float near;
+    float far;
 
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 12.0f),
-           glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f),
+    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f),
+           glm::vec3 front = glm::vec3(0.0f, 0.0f, 0.0f),
            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
            float yaw = YAW,
            float pitch = PITCH)
@@ -61,6 +60,8 @@ public:
         Pitch = pitch;
         OriYaw = yaw;
         OriPitch = pitch;
+        near = 0.01f;
+        far = 100.0f;
         updateCameraVectors();
     }
 
@@ -74,13 +75,9 @@ public:
         perspectivem = glm::perspective(fovy_rad, aspect, near, far);
     }
 
-    void setPerspectiveByFocal(int& width, int& height) {
-        
-    }
     glm::mat4 getPerspective() const {
         return perspectivem;
     }
-
     void reset() {
         Position = OriPosition;
         Front = OriFront;
@@ -89,7 +86,7 @@ public:
         Pitch = OriPitch;
         updateCameraVectors();
     }
-
+    
     void ProcessKeyBoard(Camera_Movement direction, float deltaTime) {
         float velocity = deltaTime * MovementSpeed;
         if (direction == FORWARD)

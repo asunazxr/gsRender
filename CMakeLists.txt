@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(THIRDPARTY ${CMAKE_SOURCE_DIR}/thirdParty)
 
 link_directories(
-    ${PROJECT_SOURCE_DIR}/bin
+    ${PROJECT_SOURCE_DIR}/lib
 )
 
 file(GLOB_RECURSE SOURCE_FILES
@@ -18,6 +18,7 @@ file(GLOB_RECURSE SOURCE_FILES
 
 add_executable(${PROJECT_NAME} app.cpp  ${SOURCE_FILES})
 
+
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${THIRDPARTY}
     ${CMAKE_SOURCE_DIR}/include
@@ -26,10 +27,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/thirdParty/glm
     ${CMAKE_SOURCE_DIR}/thirdParty/imgui
     ${CMAKE_SOURCE_DIR}/thirdParty/KHR
+    ${CMAKE_SOURCE_DIR}/thirdParty/happly
 
 )
 target_link_libraries(${PROJECT_NAME}
-    glfw3.lib  # GLFW 库，根据实际文件名调整
-    assimp-vc143-mt.lib  # Assimp 库，根据实际文件名调整，这里只是示例
-    opengl32.lib  # Windows 平台 OpenGL 库
+    glfw3.lib
+    opengl32.lib
 )

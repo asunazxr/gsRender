@@ -51,7 +51,7 @@ void widget::initGlfwWindow(){
 void widget::show(){
     myImGui ui(window,glsl_version);
     
-    //C:\Users\ASUS\Desktop\proj\minRender\resource\3dgs\zw.ply E:\项目\VS_Proj\readPly\readPly\resource\point_cloud.ply
+    //C:\Users\ASUS\Desktop\proj\minRender\resource\3dgs\shuimiao.ply E:\项目\VS_Proj\readPly\readPly\resource\point_cloud.ply
     RenderSystem rs;
     float curFrame = 0.0f;
     float lastFrame = (float)glfwGetTime();
@@ -69,6 +69,7 @@ void widget::show(){
         this->processKey(this->window,deltaTime);
         this->processMouse(this->window);
         glfwGetWindowSize (window, &this->w, &this->h);
+        //camera.steFocal(this->w);
         camera.setPerspective(this->w,this->h);
         //g.render(*this);
         rs.render(*this);
